@@ -4,7 +4,7 @@ module Rack
   # the request method from the Facebook POST to the original HTTP
   # method used by the client.
   #
-  # If the signature is wrong, it returns a "404 Invalid Facebook Signature".
+  # If the signature is wrong, it returns a "400 Invalid Facebook Signature".
   # 
   # Optionally, it can take a block that receives the Rack environment
   # and returns a value that evaluates to true when we want the middleware to
@@ -35,7 +35,7 @@ module Rack
         req = Rack::Request.new(env)
         fb_params = extract_fb_sig_params(req.POST)
         unless signature_is_valid?(fb_params, req.POST['fb_sig'])
-          return [404, {"Content-Type" => "text/html"}, ["Invalid Facebook signature"]]
+          return [400, {"Content-Type" => "text/html"}, ["Invalid Facebook signature"]]
         end
         env['REQUEST_METHOD'] = fb_params["request_method"]
         convert_parameters!(req.POST)

@@ -3,7 +3,7 @@ converts them to Ruby objects when appropiate. Also, it converts
 the request method from the Facebook POST to the original HTTP
 method used by the client.
 
-If the signature is wrong, it returns a "404 Invalid Facebook Signature".
+If the signature is wrong, it returns a "400 Invalid Facebook Signature".
 
 Optionally, it can take a block that receives the Rack environment
 and returns a value that evaluates to true when we want the middleware to

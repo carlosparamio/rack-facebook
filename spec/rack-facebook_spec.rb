@@ -4,7 +4,7 @@ require 'rack/facebook'
 describe Rack::Facebook do
   describe 'without a block' do
     describe 'when the fb_sig is not valid' do
-      it 'should return 404 Invalid Facebook signature'
+      it 'should return 400 Invalid Facebook signature'
     end
     
     describe 'when the fb_sig is valid' do
