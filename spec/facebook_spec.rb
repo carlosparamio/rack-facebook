@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'rack/facebook'
 
 describe Rack::Facebook do

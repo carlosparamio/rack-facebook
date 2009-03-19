@@ -1,3 +1,5 @@
+require 'digest'
+
 module Rack
   # This Rack middleware checks the signature of Facebook params, and
   # converts them to Ruby objects when appropiate. Also, it converts
