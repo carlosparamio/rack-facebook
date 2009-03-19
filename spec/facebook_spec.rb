@@ -4,27 +4,53 @@ require 'rack/facebook'
 
 describe Rack::Facebook do
   SECRET = "123456789"
+  API_KEY = "616313"
   
   def calculate_signature(hash)
     raw_string = hash.map{ |*pair| pair.join('=') }.sort.join
     Digest::MD5.hexdigest([raw_string, SECRET].join)
   end
   
-  def sign_params(hash)
+  def sign_hash(hash, prefix)
     fb_hash = hash.inject({}) do |all, (key, value)|
-      all[key.sub("fb_sig_", "")] = value if key.index("fb_sig_") == 0
+      all[key.sub("#{prefix}_", "")] = value if key.index("#{prefix}_") == 0
       all
     end
-    hash.merge("fb_sig" => calculate_signature(fb_hash))
+    hash.merge(prefix => calculate_signature(fb_hash))
+  end
+  
+  def sign_params(hash)
+    sign_hash(hash, "fb_sig")
+  end
+  
+  def sign_cookies(hash)
+    sign_hash(hash, API_KEY)
   end
   
   def post_env(params)
-    {"rack.request.form_hash" => params, "rack.request.form_input" => "fb", "rack.input" => "fb"}
+    env = {"rack.request.form_hash" => params}
+    env["rack.request.form_input"] = env["rack.input"] = "fb"
+    env
   end
   
   def post(app, params)
-    request = Rack::MockRequest.new(described_class.new(app, SECRET))
-    @response = request.post("/", post_env(params))
+    mock_post app, post_env(params)
+  end
+  
+  def mock_post(app, env)
+    facebook = described_class.new(app, :application_secret => SECRET, :api_key => API_KEY)
+    request = Rack::MockRequest.new(facebook)
+    @response = request.post("/", env)
+  end
+  
+  def cookie_env(cookies)
+    env = {"rack.request.cookie_hash" => cookies}
+    env["rack.request.cookie_string"] = env["HTTP_COOKIE"] = "fb"
+    env
+  end
+  
+  def cookie_request(app, cookies)
+    mock_post app, cookie_env(cookies)
   end
   
   def response
@@ -74,6 +100,20 @@ describe Rack::Facebook do
         app = mock('rack app')
         app.should_receive(:call).with(instance_of(Hash)).and_return(response_env)
         post app, sign_params("fb_sig_foo" => "bar")
+      end
+    end
+    
+    context "cookie authentication" do
+      it "should run app if cookie signature is valid" do
+        app = mock('rack app')
+        app.should_receive(:call).with(instance_of(Hash)).and_return(response_env)
+        cookie_request app, sign_cookies("#{API_KEY}_user" => "22", "#{API_KEY}_ss" => "SEKRIT")
+        response.status.should == 200
+      end
+      
+      it "should not run app if cookie signature turns out invalid" do
+        cookie_request mock('rack app'), API_KEY => "INVALID", "#{API_KEY}_ss" => "SEKRIT"
+        response.status.should == 400
       end
     end
   end
