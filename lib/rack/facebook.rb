@@ -28,48 +28,66 @@ module Rack
   class Facebook    
     def initialize(app, secret_key, &condition)
       @app = app
-      @secret_key = secret_key
+      @secret = secret_key
       @condition = condition
     end
     
     def call(env)
-      if @condition.nil? || @condition.call(env)
-        req = Rack::Request.new(env)
-        fb_params = extract_fb_sig_params(req.POST)
-        unless signature_is_valid?(fb_params, req.POST['fb_sig'])
+      request = Rack::Request.new(env)
+      
+      if facebook_request?(request)
+        fb_params = extract_facebook_params(request.POST)
+        
+        if signature_is_valid?(fb_params, request.POST.delete("fb_sig"))
+          env["facebook.original_method"] = env["REQUEST_METHOD"]
+          env["REQUEST_METHOD"] = fb_params.delete("request_method")
+          save_facebook_params(fb_params, env)
+        else
           return [400, {"Content-Type" => "text/html"}, ["Invalid Facebook signature"]]
         end
-        env['REQUEST_METHOD'] = fb_params["request_method"]
-        convert_parameters!(req.POST)
       end
       return @app.call(env)
     end
     
     private
-
-    def extract_fb_sig_params(params)
-      params.inject({}) do |collection, pair|
-        collection[pair.first.sub(/^fb_sig_/, '')] = pair.last if pair.first[0,7] == 'fb_sig_'
-        collection
-      end
+    
+    def facebook_request?(request)
+      (@condition.nil? or @condition.call(request.env)) and request.POST["fb_sig"]
     end
     
     def signature_is_valid?(fb_params, actual_sig)
-      raw_string = fb_params.map{ |*args| args.join('=') }.sort.join
-      expected_signature = Digest::MD5.hexdigest([raw_string, @secret_key].join)
-      actual_sig == expected_signature
+      actual_sig == calculate_signature(fb_params)
     end
     
-    def convert_parameters!(params)
+    def calculate_signature(hash)
+      raw_string = hash.map{ |*pair| pair.join('=') }.sort.join
+      Digest::MD5.hexdigest([raw_string, @secret].join)
+    end
+    
+    def extract_facebook_params(params)
+      params.inject({}) do |fb, (key, _)|
+        fb[key.sub(/^fb_sig_/, '')] = params.delete(key) if key.index("fb_sig_")
+        fb
+      end
+    end
+    
+    def save_facebook_params(params, env)
       params.each do |key, value|
-        case key
-        when 'fb_sig_added', 'fb_sig_in_canvas', 'fb_sig_in_new_facebook', 'fb_sig_position_fix'
-          params[key] = value == "1"
-        when 'fb_sig_expires', 'fb_sig_profile_update_time', 'fb_sig_time'
-          params[key] = value == "0" ? nil : Time.at(value.to_f)
-        when 'fb_sig_friends'
-          params[key] = value.split(',')
+        ruby_value = case key
+        when 'added', 'in_canvas', 'in_new_facebook', 'position_fix'
+          value == '1'
+        when 'expires', 'profile_update_time', 'time'
+          begin
+            Time.at(value.to_f) rescue TypeError
+
+          rescue TypeError
+            # oh noes!
+          end
+        when 'friends'
+          value.split(',')
         end
+            
+        env["facebook.#{key}"] = ruby_value if ruby_value
       end
     end
   end
