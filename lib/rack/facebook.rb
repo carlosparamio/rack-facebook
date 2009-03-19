@@ -49,14 +49,14 @@ module Rack
         if request.params_signature
           fb_params = request.extract_facebook_params(:post)
         
-          if valid = signature_is_valid?(fb_params, request.params_signature)
+          if valid = valid_signature?(fb_params, request.params_signature)
             env["facebook.original_method"] = env["REQUEST_METHOD"]
             env["REQUEST_METHOD"] = fb_params.delete("request_method")
             save_facebook_params(fb_params, env)
           end
         elsif request.cookies_signature
           cookie_params = request.extract_facebook_params(:cookies)
-          valid = signature_is_valid?(cookie_params, request.cookies_signature)
+          valid = valid_signature?(cookie_params, request.cookies_signature)
         end
         
         unless valid
@@ -72,7 +72,7 @@ module Rack
       @condition.nil? or @condition.call(request.env)
     end
     
-    def signature_is_valid?(fb_params, actual_sig)
+    def valid_signature?(fb_params, actual_sig)
       actual_sig == calculate_signature(fb_params)
     end
     
