@@ -86,6 +86,15 @@ describe Rack::Facebook do
         @env['facebook.in_canvas'].should be_true
       end
       
+      it "should split friend IDs into an array" do
+        app = lambda do |env|
+          env["facebook.friends"].should == ["2", "3", "5"]
+          response_env
+        end
+        post app, sign_params("fb_sig_friends" => "2,3,5")
+        response.status.should == 200
+      end
+      
       it 'should convert the request method from POST to the original client method' do
         app = mock('rack app')
         app.should_receive(:call).with { |env|
