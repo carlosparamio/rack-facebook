@@ -87,17 +87,12 @@ module Rack
         when 'added', 'in_canvas', 'in_new_facebook', 'position_fix'
           value == '1'
         when 'expires', 'profile_update_time', 'time'
-          begin
-            Time.at(value.to_f) rescue TypeError
-
-          rescue TypeError
-            # oh noes!
-          end
+          Time.at(value.to_f) rescue TypeError
         when 'friends'
           value.split(',')
         end
             
-        env["facebook.#{key}"] = ruby_value if ruby_value
+        env["facebook.#{key}"] = ruby_value
       end
     end
     
