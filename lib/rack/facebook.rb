@@ -25,6 +25,10 @@ module Rack
   #     env['REQUEST_URI'] =~ /^\/facebook_only/
   #   end
   #
+  # == References
+  # * http://wiki.developers.facebook.com/index.php/Authorizing_Applications
+  # * http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
+  #
   class Facebook    
     def initialize(app, options, &condition)
       @app = app
@@ -84,7 +88,7 @@ module Rack
     def save_facebook_params(params, env)
       params.each do |key, value|
         ruby_value = case key
-        when 'added', 'in_canvas', 'in_new_facebook', 'position_fix'
+        when 'added', 'page_added', 'in_canvas', 'in_profile_tab', 'in_new_facebook', 'position_fix', 'logged_out_facebook'
           value == '1'
         when 'expires', 'profile_update_time', 'time'
           Time.at(value.to_f) rescue TypeError
