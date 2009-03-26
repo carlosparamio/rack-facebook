@@ -45,7 +45,8 @@ module Rack
     end
     
     def call(env)
-      request = Request.new(env, api_key)
+      request = Request.new(env)
+      request.api_key = api_key
       
       if passes_condition?(request) and request.facebook?
         valid = true
@@ -102,11 +103,7 @@ module Rack
     
     class Request < ::Rack::Request
       FB_PREFIX = "fb_sig".freeze
-      
-      def initialize(env, api_key)
-        super(env)
-        @api_key = api_key
-      end
+      attr_accessor :api_key
       
       def facebook?
         params_signature or cookies_signature
