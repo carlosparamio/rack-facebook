@@ -95,6 +95,8 @@ module Rack
           Time.at(value.to_f) rescue TypeError
         when 'friends'
           value.split(',')
+        else
+          value
         end
             
         env["facebook.#{key}"] = ruby_value
