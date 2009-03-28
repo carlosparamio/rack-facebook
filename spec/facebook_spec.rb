@@ -77,13 +77,14 @@ describe Rack::Facebook do
           response_env
         end
         
-        post app, sign_params("fb_sig_in_canvas" => "1", "fb_sig_time" => "1")
+        post app, sign_params("fb_sig_in_canvas" => "1", "fb_sig_time" => "1", "fb_sig_user" => "234433")
         response.status.should == 200
         
         @params['fb_sig'].should be_nil
         @params['fb_sig_time'].should be_nil
         @env['facebook.time'].should == Time.at(1)
         @env['facebook.in_canvas'].should be_true
+        @env['facebook.user'].should == "234433"
       end
       
       it "should split friend IDs into an array" do
