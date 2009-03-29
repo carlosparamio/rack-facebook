@@ -82,9 +82,23 @@ describe Rack::Facebook do
         
         @params['fb_sig'].should be_nil
         @params['fb_sig_time'].should be_nil
+        @params['fb_sig_user'].should be_nil
+        @params['fb_sig_in_canvas'].should be_nil
+        
         @env['facebook.time'].should == Time.at(1)
         @env['facebook.in_canvas'].should be_true
         @env['facebook.user'].should == "234433"
+      end
+      
+      it 'should not touch parameters not prefixed with "fb_sig"' do
+        app = lambda do |env|
+          params = Rack::Request.new(env).params
+          params['foo'].should == 'bar'
+          response_env
+        end
+        
+        post app, sign_params("fb_sig_user" => "234433", "foo" => "bar")
+        response.status.should == 200
       end
       
       it "should split friend IDs into an array" do

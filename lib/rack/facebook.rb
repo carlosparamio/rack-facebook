@@ -133,8 +133,10 @@ module Rack
         prefix = "#{prefix}_"
         
         source.inject({}) do |extracted, (key, value)|
-          extracted[key.sub(prefix, '')] = value if key.index(prefix) == 0
-          source.delete(key) if :post == where
+          if key.index(prefix) == 0
+            extracted[key.sub(prefix, '')] = value
+            source.delete(key) if :post == where
+          end
           extracted
         end
       end
