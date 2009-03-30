@@ -46,7 +46,7 @@ module Rack
     
     def call(env)
       request = Request.new(env)
-      request.api_key = api_key
+      request.api_key = api_key      
       
       if passes_condition?(request) and request.facebook?
         valid = true
@@ -101,6 +101,9 @@ module Rack
             
         env["facebook.#{key}"] = ruby_value
       end
+      
+      env["facebook.api_key"] = api_key
+      env["facebook.secret"] = secret
     end
     
     class Request < ::Rack::Request
@@ -121,6 +124,7 @@ module Rack
       end
       
       def extract_facebook_params(where)
+        
         case where
         when :post
           source = self.POST

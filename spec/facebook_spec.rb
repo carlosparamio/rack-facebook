@@ -95,9 +95,16 @@ describe Rack::Facebook do
         request.env['facebook.user'].should == "234433"
       end
       
+      it "should add api_key and secret to the environment" do
+        post "fb_sig_in_canvas" => "1", "fb_sig_time" => "1", "fb_sig_user" => "234433"
+        
+        request.env['facebook.api_key'].should == API_KEY
+        request.env['facebook.secret'].should == SECRET
+      end
+      
       it "should strip facebook parameters from params hash" do
         post "fb_sig_in_canvas" => "1", "fb_sig_user" => "234433"
-        
+
         request['fb_sig'].should be_nil
         request['fb_sig_user'].should be_nil
         request['fb_sig_in_canvas'].should be_nil
