@@ -36,6 +36,10 @@ module Rack
       @condition = condition
     end
     
+    def app_name
+      @options[:application_name]
+    end
+    
     def secret
       @options[:application_secret]
     end
@@ -102,6 +106,7 @@ module Rack
         env["facebook.#{key}"] = ruby_value
       end
       
+      env["facebook.app_name"] = app_name
       env["facebook.api_key"] = api_key
       env["facebook.secret"] = secret
     end

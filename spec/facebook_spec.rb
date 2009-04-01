@@ -3,6 +3,7 @@ require 'rack/mock'
 require 'rack/facebook'
 
 describe Rack::Facebook do
+  APP_NAME = 'my_app'
   SECRET = "123456789"
   API_KEY = "616313"
   
@@ -28,7 +29,7 @@ describe Rack::Facebook do
   end
   
   def mock_post(app, env)
-    facebook = described_class.new(app, :application_secret => SECRET, :api_key => API_KEY)
+    facebook = described_class.new(app, :application_name => APP_NAME, :application_secret => SECRET, :api_key => API_KEY)
     request = Rack::MockRequest.new(facebook)
     @response = request.post("/", env)
   end
@@ -95,9 +96,10 @@ describe Rack::Facebook do
         request.env['facebook.user'].should == "234433"
       end
       
-      it "should add api_key and secret to the environment" do
+      it "should add app name, api_key and secret to the environment" do
         post "fb_sig_in_canvas" => "1", "fb_sig_time" => "1", "fb_sig_user" => "234433"
         
+        request.env['facebook.app_name'].should == APP_NAME
         request.env['facebook.api_key'].should == API_KEY
         request.env['facebook.secret'].should == SECRET
       end
