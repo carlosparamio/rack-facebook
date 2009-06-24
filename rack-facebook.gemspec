@@ -13,9 +13,7 @@ Gem::Specification.new do |s|
 		"Rakefile", 
 		"rack-facebook.gemspec", 
 		"lib/rack/facebook.rb"]
-  s.test_files = ["spec/spec.opts", 
-      "spec/spec_helper.rb", 
-      "spec/rack-facebook_spec.rb"]
+  s.test_files = ["spec/rack-facebook_spec.rb"]
   s.rdoc_options = ["--main", "Rack::Facebook"]
   #s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.txt"]
   s.add_dependency("rack", [">= 0.4.0"])
