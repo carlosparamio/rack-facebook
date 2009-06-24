@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "rack-facebook"
-  s.version  = "0.0.1"
+  s.version  = "0.0.2"
   s.date     = "2009-01-09"
   s.summary  = "Rack middleware to verify and parse Facebook parameters"
   s.email    = "carlos@evolve.st"
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
       "spec/rack-facebook_spec.rb"]
   s.rdoc_options = ["--main", "Rack::Facebook"]
   #s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.txt"]
-  s.add_dependency("rack", ["= 0.4.0"])
+  s.add_dependency("rack", [">= 0.4.0"])
 end
