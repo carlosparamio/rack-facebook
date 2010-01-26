@@ -17,7 +17,7 @@ module Rack
   #
   # In your rack builder:
   #
-  #   use Rack::Facebook, :application_secret => "SECRET", :api_key => "APIKEY"
+  #   use Rack::Facebook, :app_name => "My Application", :secret => "SECRET", :api_key => "APIKEY"
   #
   # Using a block condition:
   #
@@ -37,11 +37,11 @@ module Rack
     end
     
     def app_name
-      @options[:application_name]
+      @options[:app_name]
     end
     
     def secret
-      @options[:application_secret]
+      @options[:secret]
     end
     
     def api_key
@@ -129,7 +129,6 @@ module Rack
       end
       
       def extract_facebook_params(where)
-        
         case where
         when :post
           source = self.POST

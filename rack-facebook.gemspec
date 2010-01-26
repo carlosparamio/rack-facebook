@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name     = "rack-facebook"
-  s.version  = "0.0.2"
-  s.date     = "2009-01-09"
+  s.version  = "0.0.3"
+  s.date     = "2010-01-26"
   s.summary  = "Rack middleware to verify and parse Facebook parameters"
   s.email    = "carlos@evolve.st"
   s.homepage = "http://www.evolve.st/notebook/2009/1/9/rack-facebook-a-new-rack-middleware-to-parse-facebook-parameters"

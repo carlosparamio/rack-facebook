@@ -14,7 +14,7 @@ be executed for the specific request.
 In your config.ru:
 
     require 'rack/facebook'
-    use Rack::Facebook, "my_facebook_secret_key"
+    use Rack::Facebook, :app_name => "My Application", :secret => "SECRET", :api_key => "APIKEY"
 
 Using a block condition:
 
