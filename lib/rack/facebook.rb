@@ -17,7 +17,7 @@ module Rack
   #
   # In your rack builder:
   #
-  #   use Rack::Facebook, :app_name => "My Application", :secret => "SECRET", :api_key => "APIKEY"
+  #   use Rack::Facebook, :app_name => "My Application", :application_secret => "SECRET", :api_key => "APIKEY"
   #
   # Using a block condition:
   #
@@ -41,7 +41,7 @@ module Rack
     end
     
     def secret
-      @options[:secret]
+      @options[:application_secret]
     end
     
     def api_key

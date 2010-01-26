@@ -29,7 +29,7 @@ describe Rack::Facebook do
   end
   
   def mock_post(app, env)
-    facebook = described_class.new(app, :app_name => APP_NAME, :secret => SECRET, :api_key => API_KEY)
+    facebook = described_class.new(app, :app_name => APP_NAME, :application_secret => SECRET, :api_key => API_KEY)
     request = Rack::MockRequest.new(facebook)
     @response = request.post("/", env)
   end
