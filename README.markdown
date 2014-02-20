@@ -27,3 +27,6 @@ Using a block condition:
 Carlos Paramio
 
 [http://h1labs.com/](http://h1labs.com/)
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/carlosparamio/rack-facebook/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
