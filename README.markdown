@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/rack-facebook.svg)](http://badge.fury.io/rb/rack-facebook)
+
 This Rack middleware checks the signature of Facebook params, and
 converts them to Ruby objects when appropiate. Also, it converts
 the request method from the Facebook POST to the original HTTP
